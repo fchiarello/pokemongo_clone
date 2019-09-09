@@ -80,7 +80,11 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         let anotacao = view.annotation
-        let pokemon = (view.annotation as! PokemonAnotacao).pokemon
+        guard let annotation = view.annotation as? PokemonAnotacao,
+        let pokemon = annotation.pokemon as? Pokemon,
+        let name = pokemon.nome as? String else {
+            return
+        }
        
         mapView.deselectAnnotation(anotacao, animated: true)
         
@@ -97,7 +101,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 if self.mapa.visibleMapRect.contains(MKMapPoint.init(coord)){
                     self.coreDataPokemon.salvarPokemon(pokemon: pokemon)
                     self.mapa.removeAnnotation(anotacao!)
-                    let alertController = UIAlertController(title: "Parabéns!", message: "Você capturou o Pokemón, \(String(describing: pokemon.nome))", preferredStyle: .alert)
+                    let alertController = UIAlertController(title: "Parabéns!", message: "Você capturou o Pokemón, \(name)", preferredStyle: .alert)
                     let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
                     alertController.addAction(ok)
                     self.present(alertController, animated: true, completion: nil)
